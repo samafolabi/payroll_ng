@@ -1,0 +1,115 @@
+<section style="padding: 2em 3em;">
+    <div>
+        <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" role="tab" data-bs-toggle="pill" href="#login-tab">Log In</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link" role="tab" data-bs-toggle="pill" href="#signup-tab">Sign Up</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="login-tab" class="tab-pane active" role="tabpanel">
+                <h1 style="margin-bottom: 0.4em;">Login</h1>
+                <form>
+                    <div class="container" style="padding: 0;margin: 0;">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <label for="email" class="form-label">Email</label>
+                                <input class="form-control" name="email" type="email" id="email" placeholder="hello@example.com" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <label for="password" class="form-label">Password</label>
+                                <input class="form-control" name="password" type="password" id="password" placeholder="********" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <button (click)="login()" class="btn btn-primary" type="button">Log In</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div id="signup-tab" class="tab-pane" role="tabpanel">
+                <h1 style="margin-bottom: 0.4em;">Create New Account</h1>
+                <form>
+                    <div class="container" style="padding: 0;margin: 0;">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="s_fname" class="form-label">First Name</label>
+                                <input class="form-control" name="s_fname" type="text" id="s_fname" placeholder="Jane" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="s_lname" class="form-label">Last Name</label>
+                                <input class="form-control" name="s_lname" type="text" id="s_lname" placeholder="Doe" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="s_dob" class="form-label">Date of Birth</label>
+                                <input class="form-control" name="s_dob" type="date" id="s_dob" placeholder="DOB" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="s_email" class="form-label">Email</label>
+                                <input class="form-control" name="s_email" type="email" id="s_email" placeholder="hello@example.com" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="s_password" class="form-label">Password</label>
+                                <input class="form-control" name="s_password" type="password" id="s_password" placeholder="********" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="s_cpassword" class="form-label">Confirm Password</label>
+                                <input class="form-control" name="s_cpassword" type="password" id="s_cpassword" placeholder="********" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col">
+                                <button (click)="signup()" class="btn btn-primary" type="button">Sign Up</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+<!-- <section>
+
+    <form>
+        <h4>Login</h4>
+        <input name="email" type="email" id="email" placeholder="Email" /><br />
+        <input name="password" type="password" id="password" placeholder="Password" />
+    </form>
+    <button type="button" (click)="login()">Login</button>
+
+    <br /><br /><br /><br />
+
+    <form>
+        <h4>Signup</h4>
+        <input name="s_email" type="email" id="s_email" placeholder="Email" /><br />
+        <input name="s_password" type="password" id="s_password" placeholder="Password" /><br />
+        <input name="s_cpassword" type="password" id="s_cpassword" placeholder="Confirm Password" /><br />
+        <input name="s_fname" type="text" id="s_fname" placeholder="First Name" /><br />
+        <input name="s_lname" type="text" id="s_lname" placeholder="Last Name" /><br />
+        <input name="s_dob" type="date" id="s_dob" placeholder="Email" /><br />
+    </form>
+    <button type="button" (click)="signup()">Sign up</button>
+
+</section> -->

@@ -1,0 +1,95 @@
+/*table, td, th {
+    border: 1px solid black;
+}*/
+
+@media (min-width: 992px) {
+    section {
+        padding: 1.5em 6em;
+    }
+}
+
+@media (max-width: 991px) {
+    section {
+        padding: 1.5em 2em;
+    }
+}
+
+#pay_table table {
+    table-layout: fixed;
+    min-width: 755px;
+}
+
+#personals .table-responsive {
+    width: 100%;
+    background: rgb(255,222,100);
+    border: none;
+}
+
+#personals table {
+    table-layout: fixed;
+    min-width: 650px;
+}
+
+#personals td {
+    text-align: center;
+    font-size: 24px;
+    width: 25%;
+    color: rgb(80, 80, 80);
+    font-weight: bold;
+    border: none;
+}
+
+#personals td div {
+    font-size: 14px;
+    color: white;
+}
+
+#pay_table td div:first-child {
+    color: var(--bs-gray-500);
+    display: inline;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#pay_table td div:last-child {
+    color: var(--bs-gray-500);
+    float: right;
+    text-align: center;
+    margin-right: 1em;
+    white-space: nowrap;
+}
+
+#pay_table th:first-child {
+    width: 22%;
+    white-space: nowrap;
+}
+
+#pay_table th, #pay_table td {
+    width: 13%;
+    white-space: nowrap;
+}
+
+
+
+#pending_days_modal .table-responsive {
+    width: 100%;
+    /* background: rgb(255,222,100); */
+    border: 1px solid black;
+}
+
+#pending_days_modal td, #pending_days_modal th {
+    border: 1px solid black;
+    padding: 3px 4px;
+}
+
+#pending_days_modal td:nth-of-type(2) {
+    word-break: break-all;
+}
+
+#pending_days_modal td:nth-of-type(3) {
+    text-align: center;
+}
+
+.btn-link {
+    padding: 4px 8px!important;
+}

@@ -1,0 +1,17 @@
+@media (min-width: 992px) {
+    #play_svg {
+        font-size: 286px;
+    }
+}
+
+@media (max-width: 991px) {
+    #play_svg {
+        font-size: 10vw;
+    }
+}
+
+@media (max-width: 575px) {
+    .btn {
+        padding: 0.9em 3em!important;
+    }
+}

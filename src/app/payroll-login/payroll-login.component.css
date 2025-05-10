@@ -1,0 +1,26 @@
+.nav-pills {
+    display: inline-block;
+    background-color: rgb(255,222,100);
+    border-radius: 20px;
+    margin-bottom: 2em;
+}
+
+.nav-pills .nav-item, .nav-pills .nav-link {
+    display: inline-block;
+    color: black;
+    width: 100px;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: white;
+    border: 2px solid rgb(255,222,100);
+}
+
+
+
+form {
+    text-align: left;
+}
+

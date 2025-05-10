@@ -1,0 +1,364 @@
+<section *ngIf="loaded">
+    <!-- <div *ngIf="!access">
+        <h1>Access Denied</h1>
+    </div> -->
+
+    <div *ngIf="!employee_details.activated">
+        <h1>Your account will be activated soon.</h1>
+        <button class="btn btn-primary medium" type="button" (click)="logout()"
+            style="display: block;margin: 1em 0 2em;">
+            Log Out</button>
+    </div>
+
+    <div *ngIf="employee_details.activated">
+
+      <h2 *ngIf="employee_details.deactivated == true">Your account is deactivated</h2>
+
+        <div id="personals">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div>First Name</div>
+                                {{ employee_details.demographics.first_name }}
+                            </td>
+                            <td>
+                                <div>Last Name</div>
+                                {{ employee_details.demographics.last_name }}
+                            </td>
+                            <td>
+                                <div>Date of Birth</div>
+                                {{ employee_details.demographics.dob | date:'longDate' }}
+                            </td>
+                            <td>
+                                <div>Current Job Title</div>
+                                {{ employee_details.demographics.job_title }}
+                            </td>
+                        </tr>
+                    </tbody>
+                    <div style="margin-left:12px">
+                      <button data-bs-toggle="collapse" data-bs-target="#collapse11" class="btn btn-link" (click)="extras_collapsed = !extras_collapsed">
+                        <span class="bi bi-chevron-down" *ngIf="extras_collapsed"></span>
+                        <span class="bi bi-chevron-right" *ngIf="!extras_collapsed"></span>
+                      </button>
+                      <button (click)="edit_extras()" *ngIf="!extras_collapsed && employee_details.deactivated != true" class="btn btn-link">
+                        <span *ngIf="!extras_editing" class="bi bi-pencil"></span>
+                        <span *ngIf="extras_editing" class="bi bi-check2"></span>
+                      </button>
+                    </div>
+                    <tfoot id="collapse11" class="collapse">
+                      <ul>
+                        <li>Email: <br />{{email}}</li>
+                        <li>Address: <br />
+                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.address }}</span>
+                          <input *ngIf="extras_editing" placeholder="Address" id="ext_addr" value="{{employee_details.demographics.extras?.address}}" />
+                        </li>
+                        <li>Phone Number (#): <br />
+                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.phone }}</span>
+                          <input *ngIf="extras_editing" placeholder="Phone Number" type="tel" id="ext_phone" value="{{employee_details.demographics.extras?.phone}}" />
+                        </li>
+                        <br />
+                        <li>Emergency Contact: <br />
+                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.emer_contact }}</span>
+                          <input *ngIf="extras_editing" placeholder="Emergency Contact" id="ext_emcon" value="{{employee_details.demographics.extras?.emer_contact}}" />
+                        </li>
+                        <li>Emergency Contact Phone #: <br />
+                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.emer_phone }}</span>
+                          <input *ngIf="extras_editing" id="ext_emphone" placeholder="Emergency Phone Number" type="tel" value="{{employee_details.demographics.extras?.emer_phone}}" />
+                        </li>
+                      </ul>
+                      
+                    </tfoot>
+                </table>
+            </div>
+            
+            <button class="btn btn-primary medium" type="button" (click)="logout()"
+                style="display: block;margin: 1em 0 2em;">
+                Log Out</button>
+        </div>
+
+        <div *ngIf="employee_details.sick_days > -1" id="sick_days" style="margin-bottom: 1em;">
+            <div>
+                <h2 style="margin: 0; font-size: 60px;display: inline-block;">{{ employee_details.sick_days != undefined ? employee_details.sick_days : 0 }}</h2><span style="margin: 0;"> sick day(s) left</span>
+            </div>
+            <div>
+                <h2 style="margin: 0; font-size: 60px;display: inline-block;">{{ employee_details.vacation_days != undefined ? employee_details.vacation_days : 0 }}</h2><span style="margin: 0;"> vacation day(s) left</span>
+            </div>
+            <button *ngIf="employee_details.deactivated != true" style="display: inline-block;" style="margin: 6px 6px 6px 0;" class="btn btn-primary small" type="button" (click)="request_day()">Request Day Off</button>
+            
+            
+
+            <button class="btn btn-primary small" style="width: 175px; margin: 6px 6px 6px 0;" type="button" (click)="view_history()">View History</button>
+            <button *ngIf="employee_details.deactivated != true" class="btn btn-primary small" style="width: 175px; margin: 6px 6px 6px 0;" type="button" (click)="view_pending_days()">View Pending Approvals</button>
+        </div>
+
+        <div>
+            <div style="float: right;margin-bottom: 1em;">
+              <iframe style="display: none;" id="print_frame"></iframe>
+              <div style="display: none;" id="print_prep"></div>
+              
+              <button style="margin-right: 7px;" (click)="csv()">Export</button>  
+              <button style="margin-right: 7px;" (click)="print()">Print</button>  
+              <select placeholder="Year" [(ngModel)]="current_year">
+                  <optgroup label="Year">
+                      <option *ngFor="let item of employee_details.salary | keyvalue : keyDescOrder">{{item.key}}</option>
+                  </optgroup>
+              </select>
+            </div>
+            
+            <div class="table-responsive" id="pay_table" style="clear: both;z-index: 1;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Salary Details</th>
+                            <th>Base</th>
+                            <th>Lunch</th>
+                            <th>Transport</th>
+                            <th>Healthcare</th>
+                            <th>Other</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of employee_details.salary[current_year].months | keyvalue : keyAscOrder">
+                            <th><a class="link" href="{{item.value.link}}" target="_blank">{{item.key|month}}</a></th>
+                            <td>
+                                <div>₦</div>
+                                <div>{{item.value.details.base}}</div>
+                            </td>
+                            <td>
+                                <div>₦</div>
+                                <div>{{item.value.details.lunch}}</div>
+                            </td>
+                            <td>
+                                <div>₦</div>
+                                <div>{{item.value.details.transport}}</div>
+                            </td>
+                            <td>
+                                <div>₦</div>
+                                <div>{{item.value.details.healthcare}}</div>
+                            </td>
+                            <td>
+                                <div>₦</div>
+                                <div>{{item.value.details.other}}</div>
+                            </td>
+                            <td><b>
+                                <div>₦</div>
+                                <div>{{total(item.key)}}</div>
+                            </b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="days_history_modal" tabindex="-1">
+            <div class="modal-dialog modal-md modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="color: black;">View Days Off</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+      
+      
+      
+                  <div class="accordion" id="accordion" role="tablist">
+      
+                    <div class="accordion-item">
+                      <h6 class="accordion-header" style="padding: 16px 20px;">
+                        <div class="row" style="table-layout: fixed;width: 100%;">
+                          <div class="col-3">Date Taken</div>
+                          <div class="col-6">Event Description</div>
+                          <div class="col-3">Remaining Days</div>
+                        </div>
+                      </h6>
+                    </div>
+                    
+                    <div class="accordion-item" *ngFor="let item of days_history.slice().reverse(); let i = index" role="tab">
+                      <h2 class="accordion-header">
+                        <button style="width: 100%;" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#history' + i">
+                          <div class="row" style="table-layout: fixed;width: 100%;">
+                            <div class="col-3">{{ item.date | date:'longDate' }}</div>
+                            <div class="col-6">{{ item.event }}</div>
+                            <div class="col-3">{{ plural_fill(item.num_days, item.type) }}</div>
+                          </div>
+                        </button>
+                      </h2>
+                      <div id="{{'history'+i}}" class="accordion-collapse collapse" role="tabpanel" data-bs-parent="#accordion">
+                        <div class="accordion-body">
+                          {{ item.more_info }}
+                        </div>
+                      </div>
+                    </div>
+                  
+                  </div>
+      
+      
+      
+      
+      
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="sick_days_modal" tabindex="-1">
+            <div class="modal-dialog modal-sm modal-dialog-scrollable">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" style="color: black;">Request Time Off</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+      
+                  <label>For which day?</label>
+                  <input type="date" class="form-control" [(ngModel)]="days_date" />
+                  <br /><br />
+                  <label>Reason</label>
+                  <textarea class="form-control" [(ngModel)]="days_reason"></textarea>
+                  <br /><br />
+                  <label style="margin-right: 1em;">Which type?</label>
+                  <input style="margin-right: 4px;" type="radio" name="day_type" value="sick" />Sick
+                  <input style="margin-right: 4px;" type="radio" name="day_type" value="vacation" />Vacation
+                  <br /><br />
+      
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary small" (click)="request_sick_day()">Request</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade" id="pending_days_modal" tabindex="-1">
+              <div class="modal-dialog modal-md modal-dialog-scrollable">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" style="color: black;">View Pending Days</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+        
+        
+        
+                    <table class="table-responsive">
+                        <thead>
+                          <th>Proposed Date</th>
+                          <th>Reason</th>
+                          <th>Decision</th>
+                          <th>Requested on</th>
+                          <th>Day Type</th>
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of pending_days | keyvalue; let i = index" role="tab">
+                            <td>{{ item.value.proposed_date | date:'longDate' }}</td>
+                            <td>{{ item.value.reason }}</td>
+                            <td>
+                              <button class="btn btn-primary small" (click)="cancel_pending_day(item.key)">Cancel</button>
+                            </td>
+                            <td>{{ item.value.request_date | date:'longDate' }}</td>
+                            <td>{{ item.value.type | titlecase }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+        
+        
+        
+        
+        
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+          </div>
+
+    </div>
+</section>
+
+
+
+
+
+<!-- 
+<div *ngIf="!access">
+    <h1>Access Denied</h1>
+</div>
+<div *ngIf="!activated && access">
+    <h1>Your account will be activated soon.</h1>
+</div>
+<div *ngIf="activated && access">
+    <ul>
+        <li>
+            <b>First Name</b>: {{ employee_details.demographics.first_name }}
+        </li>
+        <li>
+            <b>Last Name</b>: {{ employee_details.demographics.last_name }}
+        </li>
+        <li>
+            <b>Date of Birth</b>: {{ employee_details.demographics.dob | date:'longDate' }}
+        </li>
+        <li>
+            <b>Current Job Title</b>: {{ employee_details.demographics.job_title }}
+        </li>
+    </ul>
+
+    <br /><br />
+
+    <button (click)="logout()">Log out</button>
+
+    <br /><br /><br />
+
+
+
+
+
+    </!-- <ng-select
+        style="z-index: 1000;"
+        [items]="objectKeys(employee_details.salary)"
+        [compareWith]="compareFn"
+        placeholder="Year"
+        [(ngModel)]="current_year">
+    </ng-select> --/>
+
+
+
+
+
+    <select placeholder="Year" [(ngModel)]="current_year">
+        <option *ngFor="let item of employee_details.salary | keyvalue : keyDescOrder">{{item.key}}</option>
+    </select>
+
+    <table
+    style="z-index: 1;">
+        <thead>
+            <tr>
+                <th>Salary Details</th>
+                <th>Base</th>
+                <th>Lunch</th>
+                <th>Transport</th>
+                <th>Healthcare</th>
+                <th>Other</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of employee_details.salary[current_year].months | keyvalue : keyAscOrder">
+                <th><a href="{{item.value.link}}" target="_blank">{{item.key|month}}</a></th>
+                <td>{{item.value.details.base}}</td>
+                <td>{{item.value.details.lunch}}</td>
+                <td>{{item.value.details.transport}}</td>
+                <td>{{item.value.details.healthcare}}</td>
+                <td>{{item.value.details.other}}</td>
+                <td>{{total(item.key)}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div> -->

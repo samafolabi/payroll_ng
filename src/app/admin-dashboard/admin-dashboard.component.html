@@ -1,0 +1,350 @@
+<section *ngIf="loaded">
+    
+  <button class="btn btn-primary medium" type="button" (click)="logout()"
+    style="display: block;margin-bottom: 2em;float: left;">
+    Log Out</button>
+
+    <button class="btn btn-primary medium" type="button" (click)="view_pending_days()"
+    style="display: block;margin-bottom: 2em;float: right;">
+    View Pending Days</button>
+
+    <div class="table-responsive" style="clear: both;">
+      
+      <form>
+        <h3>Filter:</h3>
+        <div *ngFor="let label of labels; let i = index">
+          <input (change)="filter()" checked type="checkbox" class="labels" id="{{label}}" name="{{label}}" value="{{i}}">
+          <label for="{{label}}">{{label == '' ? 'Untagged' : label}}</label><br>
+        </div>
+      </form>
+      
+      <table class="table" id="employee-table">
+          <thead>
+              <tr>
+                  <th>Employees</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Date of Birth</th>
+                  <th>Current Job Title</th>
+                  <th>Sick | Vacation Days</th>
+                  <th></th>
+                  <!-- <th style="cursor: pointer;font-size: 36px;text-align: right;" (click)="sort()"><i class="bi bi-filter"></i></th> -->
+              </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let employee of organize();">
+              <tr *ngIf="employee.deactivated != true">
+                    <th *ngIf="!employee.activated"><button class="btn btn-primary small" (click)="activate(employee.ID)">Activate</button></th>
+                    <th *ngIf="employee.activated"><button class="btn btn-primary small" (click)="open(employee.ID)">Open</button></th>
+
+                    <td>{{employee.demographics.first_name}}</td>
+                    <td>{{employee.demographics.last_name}}</td>
+                    <td>{{employee.demographics.dob | date:'longDate'}}</td>
+
+                    <td>
+                      <div *ngIf="employee.activated">
+                        {{employee.demographics.job_title}}
+                        <div class="editing">
+                          <i class="bi bi-pencil-fill" (click)="edit_title(employee.ID)"></i><!-- &nbsp;Edit</i> -->
+                        </div>
+                      </div>
+                      <div *ngIf="!employee.activated">N/A</div>
+                    </td>
+
+                    <td>
+                      <div *ngIf="employee.activated && employee.sick_days > -1">
+                        {{employee.sick_days ?? 0}} | {{employee.vacation_days ?? 0}}
+
+                        <div class="editing">
+                          <i class="bi bi-pencil-fill" (click)="edit_sick_days(employee.ID)"></i>
+                        </div>
+                      </div>
+                      <div *ngIf="!employee.activated || employee.sick_days == -1">N/A</div>
+                    </td>
+
+                    <td>
+                      <div *ngIf="employee.activated && employee.sick_days > -1">
+                        <span (click)="view_sick_days(employee.ID)">View</span>
+                      </div>
+                      <div *ngIf="!employee.activated || employee.sick_days == -1">N/A</div>
+                    </td>
+
+                    <td>
+                      <select [(ngModel)]="employee.demographics.label" (change)="label_update($event, employee.ID)">
+                        <option *ngFor="let label of labels; let j = index" value="{{j}}">{{label}}</option>
+                      </select>
+                    </td>
+              </tr>
+              </ng-container>
+
+              <tr><th>Deactivated Accounts</th></tr>
+
+              <ng-container *ngFor="let employee of employees;">
+              <tr *ngIf="employee.deactivated == true">
+                <th><button class="btn btn-primary small" (click)="open(employee.ID)">Open</button></th>
+
+                <td>{{employee.demographics.first_name}}</td>
+                <td>{{employee.demographics.last_name}}</td>
+                <td>{{employee.demographics.dob | date:'longDate'}}</td>
+
+                <td>
+                  <div>
+                    {{employee.demographics.job_title}}
+                  </div>
+                </td>
+
+                <td>
+                  <div>
+                    {{employee.sick_days ?? 0}} | {{employee.vacation_days ?? 0}}
+                  </div>
+                </td>
+
+                <td>
+                  <div>
+                    <span (click)="view_sick_days(employee.ID)">View</span>
+                  </div>
+                </td>
+                
+                <th><button class="btn btn-danger small" (click)="deleteAcc(employee.ID)">Delete</button></th>
+          </tr>
+        </ng-container>
+          </tbody>
+      </table>
+    </div>
+
+
+
+    <div class="modal fade" id="modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" style="color: black;">Edit Employee</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div style="width: 100%;">
+
+                <div *ngIf="employee_details.deactivated != true">
+                  <input style="width: 75%;display: inline-block;" class="form-control" placeholder="Year" type="number" [max]="current_year" [(ngModel)]="current_modal_year"/>
+                  <button style="height:46px;width: 20%;float: right;" class="btn btn-primary small" (click)="add_year()">Add Year</button>
+                </div>
+
+                <div style="clear: both;width: 200px;margin: 1em 0 2em;" *ngIf="employee_details.deactivated != true">
+                  <a class="link" href="/assets/salaries.csv" download>Sample CSV file</a>
+                  <label style="margin-top: 6px;" for="file_input" class="btn btn-secondary small">
+                    <i style="margin-right: 4px;" class="fa bi-cloud-arrow-up-fill"></i>Upload CSV
+                  </label>
+                  <input id="file_input" type="file" accept=".csv" (change)="upload($event)" />
+                </div>
+
+              </div>
+
+              <div style="clear: both;" class="row year-row" *ngFor="let year of employee_details.salary | keyvalue : keyDescOrder; let i = index"><div class="col">
+                <h3 style="float: right;">
+                  <i *ngIf="employee_details.deactivated != true" class="bi bi-x-lg" style="cursor: pointer;font-size: 18px;" (click)="delete_year(year.key)"></i>
+                  {{year.key}}
+                </h3>
+                  
+                  <div class="table-responsive" style="clear: both;">
+                    <table class="table" style="z-index: 1;vertical-align: middle;">
+                        <thead>
+                            <tr>
+                                <th style="width: 12%;">Month</th>
+                                <th style="width: 20%;">Salary Details (Enter Link)</th>
+                                <th style="width: 12%;">Base</th>
+                                <th style="width: 12%;">Lunch</th>
+                                <th style="width: 12%;">Transport</th>
+                                <th style="width: 12%;">Healthcare</th>
+                                <th style="width: 12%;">Other</th>
+                                <th style="width: 8%;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                          <tr *ngIf="employee_details.deactivated != true">
+                            <td>
+                              <select style="padding-top: 6px;padding-bottom: 6px;" placeholder="Month" id="{{'months_'+year.key}}">
+                                <option *ngFor="let item of current_modal_months[year.key].months; let j = index" value="{{item}}">{{item}}</option>
+                              </select>
+                            </td>
+                            <td colspan="6"></td>
+                            <td style="text-align: right;">
+                              <button style="width: 30px; height: 30px;line-height:20px;padding: 0px!important;"
+                                class="btn btn-primary" type="button" (click)="add_month(year.key)">+
+                              </button>
+                            </td>
+                          </tr>
+
+                          <tr *ngFor="let month of year.value.months | keyvalue : keyAscOrder">
+                              <th>{{ month.key | month }}
+                                <i *ngIf="employee_details.deactivated != true" class="bi bi-x-lg" style="cursor: pointer;font-size: 12px;" (click)="delete_month(year.key, month.key)"></i>
+                              </th>
+                              <td><input [disabled]="employee_details.deactivated == true" class="ins form-control" type="text" [(ngModel)]="month.value.link" /></td>
+                              <td class="input-sz"><input [disabled]="employee_details.deactivated == true" class="ins form-control" type="number" [(ngModel)]="month.value.details.base" /></td>
+                              <td class="input-sz"><input [disabled]="employee_details.deactivated == true" class="ins form-control" type="number" [(ngModel)]="month.value.details.lunch" /></td>
+                              <td class="input-sz"><input [disabled]="employee_details.deactivated == true" class="ins form-control" type="number" [(ngModel)]="month.value.details.transport" /></td>
+                              <td class="input-sz"><input [disabled]="employee_details.deactivated == true" class="ins form-control" type="number" [(ngModel)]="month.value.details.healthcare" /></td>
+                              <td class="input-sz">
+                                <input [disabled]="employee_details.deactivated == true" class="ins form-control" style="width: 80%!important;display: inline-block;margin-right: 4px;" type="number" [(ngModel)]="month.value.details.other" />
+                                <i *ngIf="employee_details.deactivated != true" class="bi bi-pencil-fill" style="cursor:pointer" (click)="month_other_note(year.key, month.key)"></i>
+                              </td>
+                              <td style="text-align: right;">₦ {{total(month.key, year.key)}}</td>
+                          </tr> 
+                        </tbody>
+                    </table>
+                  </div>
+
+                  <br />
+                  <br />
+              </div></div>
+              <button *ngIf="employee_details.deactivated != true" class="btn btn-primary small" (click)="deactivate()">Deactivate</button>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+              <button *ngIf="!global_active && employee_details.deactivated != true" type="button" class="btn btn-primary small" (click)="save()">Save</button>
+              <button *ngIf="global_active" type="button" class="btn btn-primary small" (click)="activate_save()">Activate</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="sick_days_modal" tabindex="-1">
+      <div class="modal-dialog modal-sm modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: black;">Edit Sick Days</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <input type="radio" name="vaca_or_sick" (change)="sick_days_change = employees[current_sick_days_modal_idx].sick_days ?? 0" [(ngModel)]="vaca_or_sick" value="sick"> Sick
+            <input type="radio" name="vaca_or_sick" (change)="sick_days_change = employees[current_sick_days_modal_idx].vacation_days ?? 0" [(ngModel)]="vaca_or_sick" value="vacation"> Vacation
+            <br /><br />
+            <label>{{'Number of '+vaca_or_sick+' days'}}</label>
+            <input type="number" class="form-control" id="sick_days_change" [(ngModel)]="sick_days_change" min="0" />
+            <br /><br />
+            <label>Reason</label>
+            <textarea class="form-control" id="reason_sickdays" [(ngModel)]="days_reason"></textarea>
+            
+
+            <button *ngIf="employee_details.sick_days > -1" class="btn btn-primary small" (click)="disable_days()">Disable vacation & sick days</button>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary small" (click)="save_edit_sick_days()">Edit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="days_history_modal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: black;">View Days Off</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+
+
+            <div class="accordion" id="accordion" role="tablist">
+
+              <div class="accordion-item">
+                <h6 class="accordion-header" style="padding: 16px 20px;">
+                  <div class="row" style="table-layout: fixed;width: 100%;">
+                    <div class="col-3">Date Taken</div>
+                    <div class="col-6">Event Description</div>
+                    <div class="col-3">Remaining Days</div>
+                  </div>
+                </h6>
+              </div>
+              
+              <div class="accordion-item" *ngFor="let item of days_history.slice().reverse(); let i = index" role="tab">
+                <h2 class="accordion-header">
+                  <button style="width: 100%;" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#history' + i">
+                    <div class="row" style="table-layout: fixed;width: 100%;">
+                      <div class="col-3">{{ item.date | date:'longDate' }}</div>
+                      <div class="col-6">{{ item.event }}</div>
+                      <div class="col-3">{{ plural_fill(item.num_days, item.type) }}</div>
+                    </div>
+                  </button>
+                </h2>
+                <div id="{{'history'+i}}" class="accordion-collapse collapse" role="tabpanel" data-bs-parent="#accordion">
+                  <div class="accordion-body">
+                    {{ item.more_info }}
+                  </div>
+                </div>
+              </div>
+            
+            </div>
+
+
+
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="pending_days_modal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" style="color: black;">Pending Days Off</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+
+
+            <table>
+              <thead>
+                <th>Name</th>
+                <th>Proposed Date</th>
+                <th>Reason</th>
+                <th>Decision</th>
+                <th>Requested on</th>
+                <th>Day Type</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of pending_days | keyvalue; let i = index" role="tab">
+                  <td>{{ item.value.name }}</td>
+                  <td>{{ item.value.proposed_date | date:'longDate' }}</td>
+                  <td>{{ item.value.reason }}</td>
+                  <td>
+                    <button class="btn btn-primary small" (click)="approve_day(true, i)">Approve</button>
+                    <button class="btn btn-primary small" (click)="approve_day(false, i)">Deny</button>
+                  </td>
+                  <td>{{ item.value.request_date | date:'longDate' }}</td>
+                  <td>{{ item.value.type | titlecase }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+
+
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary small" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+</section>

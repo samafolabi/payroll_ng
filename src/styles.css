@@ -1,0 +1,87 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~@ng-select/ng-select/themes/material.theme.css";
+
+.btn {
+    font-weight: bold!important;
+    border: none!important;
+    padding: 0.9em 6em!important;
+    /* line-height: 33px; */
+}
+
+.btn-primary {
+    background-color: rgb(255,222,100)!important;
+}
+
+.btn.btn-primary:hover {
+    background-color: rgb(243, 193, 13)!important;;
+}
+
+.btn.small {
+    padding: 0.5em 1em!important;
+    line-height: 1em;
+    width: 100px;
+}
+
+.btn.medium {
+    padding: 0.9em 3em!important;
+}
+
+h1 {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    font-weight: bold;
+    font-size: 48px!important;
+}
+
+h3 {
+    font-size: 32px!important;
+}
+
+h5 {
+    font-size: 18px!important;
+    color: rgb(255,222,100);
+}
+
+section {
+    padding: 1.5em 7em;
+}
+
+
+
+form .row > div {
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+}
+
+label {
+    text-transform: uppercase;
+    color: var(--bs-gray-500);
+    font-size: 14px;
+}
+
+.form-control {
+    border: none!important;
+    background-color: var(--bs-gray-200)!important;
+    padding: 0.7em 1em!important;
+}
+
+
+
+.table-responsive {
+    overflow-x: hidden;
+}
+
+select {
+    padding: 9px 12px 9px 6px;
+    border-radius: 8px;
+}
+
+.link {
+    color: rgb(243, 193, 13);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link:hover {
+    color: rgb(255,222,100);
+    text-decoration: initial;
+}
