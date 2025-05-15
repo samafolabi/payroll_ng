@@ -1,5 +1,5 @@
-import { KeyValue, DatePipe, TitleCasePipe } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { KeyValue, DatePipe, TitleCasePipe, KeyValuePipe } from '@angular/common';
+import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { onAuth, auth, app, signOut } from '../../firebase';
 import { getDatabase, ref, set, onValue, child, push, update, DataSnapshot, get, remove } from "firebase/database";
@@ -12,7 +12,7 @@ import { MonthPipe } from '../month.pipe';
   selector: 'app-payroll-dashboard',
   templateUrl: './payroll-dashboard.component.html',
   styleUrls: ['./payroll-dashboard.component.css'],
-  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe ]
+  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe, KeyValuePipe ]
 })
 export class PayrollDashboardComponent implements OnInit {
   
@@ -33,7 +33,7 @@ export class PayrollDashboardComponent implements OnInit {
   uid : string = "";
   email : string = "";
 
-  constructor(private router: Router, private changeDetection: ChangeDetectorRef) { }
+  constructor(private router: Router, @Inject(ChangeDetectorRef) private changeDetection: ChangeDetectorRef) { }
 
   days_history_modal: Modal | null = null;
   days_history: HISTORY_ITEM[] = [];

@@ -1,34 +1,36 @@
-<section *ngIf="loaded">
+@if (loaded) {
+    <section>
 
-    <h1 style="margin-bottom: 0.4em;">Admin Login</h1>
-    <form style="width: 100%;">
-        <div class="container" style="padding: 0;margin: 0;">
-            <div class="row">
-                <div class="col-12 col-lg-6">
-                    <label for="email" class="form-label">Email</label>
-                    <input class="form-control" name="email" type="email" id="email" placeholder="hello@example.com" />
+        <h1 style="margin-bottom: 0.4em;">Admin Login</h1>
+        <form style="width: 100%;">
+            <div class="container" style="padding: 0;margin: 0;">
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label for="email" class="form-label">Email</label>
+                        <input class="form-control" name="email" type="email" id="email" placeholder="hello@example.com" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-lg-6">
+                        <label for="password" class="form-label">Password</label>
+                        <input class="form-control" name="password" type="password" id="password" placeholder="********" />
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <button (click)="login()" class="btn btn-primary" type="button">Log In</button>
+                    </div>
                 </div>
             </div>
+        </form>
 
-            <div class="row">
-                <div class="col-12 col-lg-6">
-                    <label for="password" class="form-label">Password</label>
-                    <input class="form-control" name="password" type="password" id="password" placeholder="********" />
-                </div>
-            </div>
+        <!-- <form>
+            <input name="email" type="email" id="email" placeholder="Email" /><br />
+            <input name="password" type="password" id="password" placeholder="Password" />
+        </form>
+        <button type="button" (click)="login()">Login</button> -->
 
-            <div class="row">
-                <div class="col">
-                    <button (click)="login()" class="btn btn-primary" type="button">Log In</button>
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <!-- <form>
-        <input name="email" type="email" id="email" placeholder="Email" /><br />
-        <input name="password" type="password" id="password" placeholder="Password" />
-    </form>
-    <button type="button" (click)="login()">Login</button> -->
-
-</section>
+    </section>
+}

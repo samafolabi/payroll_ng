@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { getCookie, setCookie, app } from '../../firebase';
 import { getDatabase, ref, set, onValue, get, remove } from "firebase/database";
 import { DETAILS, sample_details, HISTORY_ITEM, starter_history_item, starter_history_item_v, PENDING_DAY, LABELS } from "../../payroll_details";
-import { DatePipe, KeyValue, TitleCasePipe } from '@angular/common';
+import { DatePipe, KeyValue, KeyValuePipe, TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms'
 import { Modal } from 'bootstrap';
 import { MonthPipe } from '../month.pipe'
@@ -12,7 +12,7 @@ import { MonthPipe } from '../month.pipe'
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'],
-  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe ]
+  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe, KeyValuePipe ]
 })
 export class AdminDashboardComponent implements OnInit {
 

@@ -1,18 +1,22 @@
-<section *ngIf="loaded">
+@if (loaded) {
+<section>
     <!-- <div *ngIf="!access">
         <h1>Access Denied</h1>
     </div> -->
 
-    <div *ngIf="!employee_details.activated">
+    @if (!employee_details.activated) {
+    <div>
         <h1>Your account will be activated soon.</h1>
         <button class="btn btn-primary medium" type="button" (click)="logout()"
             style="display: block;margin: 1em 0 2em;">
             Log Out</button>
     </div>
+    } @else {
+    <div>
 
-    <div *ngIf="employee_details.activated">
-
-      <h2 *ngIf="employee_details.deactivated == true">Your account is deactivated</h2>
+      @if (employee_details.deactivated == true) {
+      <h2>Your account is deactivated</h2>
+      }
 
         <div id="personals">
             <div class="table-responsive">
@@ -37,36 +41,63 @@
                             </td>
                         </tr>
                     </tbody>
+
                     <div style="margin-left:12px">
+
                       <button data-bs-toggle="collapse" data-bs-target="#collapse11" class="btn btn-link" (click)="extras_collapsed = !extras_collapsed">
-                        <span class="bi bi-chevron-down" *ngIf="extras_collapsed"></span>
-                        <span class="bi bi-chevron-right" *ngIf="!extras_collapsed"></span>
+                        @if (extras_collapsed) {
+                        <span class="bi bi-chevron-down"></span>
+                        } @else {
+                        <span class="bi bi-chevron-right"></span>
+                        }
                       </button>
-                      <button (click)="edit_extras()" *ngIf="!extras_collapsed && employee_details.deactivated != true" class="btn btn-link">
-                        <span *ngIf="!extras_editing" class="bi bi-pencil"></span>
-                        <span *ngIf="extras_editing" class="bi bi-check2"></span>
+
+                      @if (!extras_collapsed && employee_details.deactivated != true) {
+                      <button (click)="edit_extras()" class="btn btn-link">
+                        @if (!extras_editing) {
+                        <span class="bi bi-pencil"></span>
+                        } @else {
+                        <span class="bi bi-check2"></span>
+                        }
                       </button>
+                      }
+
                     </div>
+
                     <tfoot id="collapse11" class="collapse">
                       <ul>
                         <li>Email: <br />{{email}}</li>
+
+                        @if (!extras_editing) {
                         <li>Address: <br />
-                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.address }}</span>
-                          <input *ngIf="extras_editing" placeholder="Address" id="ext_addr" value="{{employee_details.demographics.extras?.address}}" />
+                          <span>{{ employee_details.demographics.extras?.address }}</span>
                         </li>
                         <li>Phone Number (#): <br />
-                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.phone }}</span>
-                          <input *ngIf="extras_editing" placeholder="Phone Number" type="tel" id="ext_phone" value="{{employee_details.demographics.extras?.phone}}" />
+                          <span>{{ employee_details.demographics.extras?.phone }}</span>
                         </li>
                         <br />
                         <li>Emergency Contact: <br />
-                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.emer_contact }}</span>
-                          <input *ngIf="extras_editing" placeholder="Emergency Contact" id="ext_emcon" value="{{employee_details.demographics.extras?.emer_contact}}" />
+                          <span>{{ employee_details.demographics.extras?.emer_contact }}</span>
                         </li>
                         <li>Emergency Contact Phone #: <br />
-                          <span *ngIf="!extras_editing">{{ employee_details.demographics.extras?.emer_phone }}</span>
-                          <input *ngIf="extras_editing" id="ext_emphone" placeholder="Emergency Phone Number" type="tel" value="{{employee_details.demographics.extras?.emer_phone}}" />
+                          <span>{{ employee_details.demographics.extras?.emer_phone }}</span>
                         </li>
+                        } @else {
+                        <li>Address: <br />
+                          <input placeholder="Address" id="ext_addr" value="{{employee_details.demographics.extras?.address}}" />
+                        </li>
+                        <li>Phone Number (#): <br />
+                          <input placeholder="Phone Number" type="tel" id="ext_phone" value="{{employee_details.demographics.extras?.phone}}" />
+                        </li>
+                        <br />
+                        <li>Emergency Contact: <br />
+                          <input placeholder="Emergency Contact" id="ext_emcon" value="{{employee_details.demographics.extras?.emer_contact}}" />
+                        </li>
+                        <li>Emergency Contact Phone #: <br />
+                          <input id="ext_emphone" placeholder="Emergency Phone Number" type="tel" value="{{employee_details.demographics.extras?.emer_phone}}" />
+                        </li>
+                        }
+                        
                       </ul>
                       
                     </tfoot>
@@ -78,20 +109,26 @@
                 Log Out</button>
         </div>
 
-        <div *ngIf="employee_details.sick_days > -1" id="sick_days" style="margin-bottom: 1em;">
+        @if (employee_details.sick_days > -1) {
+        <div id="sick_days" style="margin-bottom: 1em;">
             <div>
                 <h2 style="margin: 0; font-size: 60px;display: inline-block;">{{ employee_details.sick_days != undefined ? employee_details.sick_days : 0 }}</h2><span style="margin: 0;"> sick day(s) left</span>
             </div>
             <div>
                 <h2 style="margin: 0; font-size: 60px;display: inline-block;">{{ employee_details.vacation_days != undefined ? employee_details.vacation_days : 0 }}</h2><span style="margin: 0;"> vacation day(s) left</span>
             </div>
-            <button *ngIf="employee_details.deactivated != true" style="display: inline-block;" style="margin: 6px 6px 6px 0;" class="btn btn-primary small" type="button" (click)="request_day()">Request Day Off</button>
+            @if (employee_details.deactivated != true) {
+            <button style="display: inline-block;" style="margin: 6px 6px 6px 0;" class="btn btn-primary small" type="button" (click)="request_day()">Request Day Off</button>
+            }
             
             
 
             <button class="btn btn-primary small" style="width: 175px; margin: 6px 6px 6px 0;" type="button" (click)="view_history()">View History</button>
-            <button *ngIf="employee_details.deactivated != true" class="btn btn-primary small" style="width: 175px; margin: 6px 6px 6px 0;" type="button" (click)="view_pending_days()">View Pending Approvals</button>
-        </div>
+            @if (employee_details.deactivated != true) {
+            <button class="btn btn-primary small" style="width: 175px; margin: 6px 6px 6px 0;" type="button" (click)="view_pending_days()">View Pending Approvals</button>
+            }
+          </div>
+        }
 
         <div>
             <div style="float: right;margin-bottom: 1em;">
@@ -102,7 +139,9 @@
               <button style="margin-right: 7px;" (click)="print()">Print</button>  
               <select placeholder="Year" [(ngModel)]="current_year">
                   <optgroup label="Year">
-                      <option *ngFor="let item of employee_details.salary | keyvalue : keyDescOrder">{{item.key}}</option>
+                    @for (item of employee_details.salary | keyvalue : keyDescOrder; track $index) {
+                      <option>{{item.key}}</option>
+                    }
                   </optgroup>
               </select>
             </div>
@@ -121,7 +160,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let item of employee_details.salary[current_year].months | keyvalue : keyAscOrder">
+                      @for (item of employee_details.salary[current_year].months | keyvalue : keyAscOrder; track $index) {
+                        <tr>
                             <th><a class="link" href="{{item.value.link}}" target="_blank">{{item.key|month}}</a></th>
                             <td>
                                 <div>₦</div>
@@ -148,6 +188,7 @@
                                 <div>{{total(item.key)}}</div>
                             </b></td>
                         </tr>
+                      }
                     </tbody>
                 </table>
             </div>
@@ -176,22 +217,24 @@
                       </h6>
                     </div>
                     
-                    <div class="accordion-item" *ngFor="let item of days_history.slice().reverse(); let i = index" role="tab">
-                      <h2 class="accordion-header">
-                        <button style="width: 100%;" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#history' + i">
-                          <div class="row" style="table-layout: fixed;width: 100%;">
-                            <div class="col-3">{{ item.date | date:'longDate' }}</div>
-                            <div class="col-6">{{ item.event }}</div>
-                            <div class="col-3">{{ plural_fill(item.num_days, item.type) }}</div>
+                    @for (item of days_history.slice().reverse(); track $index; let i = $index) {
+                      <div class="accordion-item" role="tab">
+                        <h2 class="accordion-header">
+                          <button style="width: 100%;" class="accordion-button collapsed" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#history' + i">
+                            <div class="row" style="table-layout: fixed;width: 100%;">
+                              <div class="col-3">{{ item.date | date:'longDate' }}</div>
+                              <div class="col-6">{{ item.event }}</div>
+                              <div class="col-3">{{ plural_fill(item.num_days, item.type) }}</div>
+                            </div>
+                          </button>
+                        </h2>
+                        <div id="{{'history'+i}}" class="accordion-collapse collapse" role="tabpanel" data-bs-parent="#accordion">
+                          <div class="accordion-body">
+                            {{ item.more_info }}
                           </div>
-                        </button>
-                      </h2>
-                      <div id="{{'history'+i}}" class="accordion-collapse collapse" role="tabpanel" data-bs-parent="#accordion">
-                        <div class="accordion-body">
-                          {{ item.more_info }}
                         </div>
                       </div>
-                    </div>
+                    }
                   
                   </div>
       
@@ -256,7 +299,8 @@
                           <th>Day Type</th>
                         </thead>
                         <tbody>
-                          <tr *ngFor="let item of pending_days | keyvalue; let i = index" role="tab">
+                          @for (item of pending_days | keyvalue; track $index; let i = $index) {
+                          <tr role="tab">
                             <td>{{ item.value.proposed_date | date:'longDate' }}</td>
                             <td>{{ item.value.reason }}</td>
                             <td>
@@ -265,6 +309,7 @@
                             <td>{{ item.value.request_date | date:'longDate' }}</td>
                             <td>{{ item.value.type | titlecase }}</td>
                           </tr>
+                          }
                         </tbody>
                       </table>
         
@@ -281,7 +326,9 @@
           </div>
 
     </div>
+    }
 </section>
+}
 
 
 
