@@ -3,7 +3,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PayrollLoginComponent } from './payroll-login/payroll-login.component';
 import { PayrollDashboardComponent } from './payroll-dashboard/payroll-dashboard.component';
@@ -14,23 +13,9 @@ import { HomeComponent } from './home/home.component';
 import { FiltPipe } from './filt.pipe';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    PayrollLoginComponent,
-    PayrollDashboardComponent,
-    MonthPipe,
-    AdminLoginComponent,
-    AdminDashboardComponent,
-    HomeComponent,
-    FiltPipe
-  ],
-  imports: [
-    BrowserModule,
-    NgSelectModule,
-    FormsModule,
-    AppRoutingModule
-  ],
+  declarations: [],
+  imports: [],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: []
 })
 export class AppModule { }

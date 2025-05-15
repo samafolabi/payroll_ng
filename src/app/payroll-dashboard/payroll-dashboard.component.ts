@@ -1,15 +1,18 @@
-import { KeyValue } from '@angular/common';
+import { KeyValue, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { onAuth, auth, app, signOut } from '../../firebase';
 import { getDatabase, ref, set, onValue, child, push, update, DataSnapshot, get, remove } from "firebase/database";
 import { DETAILS, sample_details, HISTORY_ITEM, PENDING_DAY } from "../../payroll_details";
 import { Modal } from 'bootstrap';
+import { FormsModule } from '@angular/forms'
+import { MonthPipe } from '../month.pipe';
 
 @Component({
   selector: 'app-payroll-dashboard',
   templateUrl: './payroll-dashboard.component.html',
-  styleUrls: ['./payroll-dashboard.component.css']
+  styleUrls: ['./payroll-dashboard.component.css'],
+  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe ]
 })
 export class PayrollDashboardComponent implements OnInit {
   

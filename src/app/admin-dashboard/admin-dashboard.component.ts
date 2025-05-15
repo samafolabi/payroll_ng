@@ -3,13 +3,16 @@ import { Router } from '@angular/router';
 import { getCookie, setCookie, app } from '../../firebase';
 import { getDatabase, ref, set, onValue, get, remove } from "firebase/database";
 import { DETAILS, sample_details, HISTORY_ITEM, starter_history_item, starter_history_item_v, PENDING_DAY, LABELS } from "../../payroll_details";
-import { KeyValue } from '@angular/common';
+import { DatePipe, KeyValue, TitleCasePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms'
 import { Modal } from 'bootstrap';
+import { MonthPipe } from '../month.pipe'
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css']
+  styleUrls: ['./admin-dashboard.component.css'],
+  imports: [ FormsModule, MonthPipe, DatePipe, TitleCasePipe ]
 })
 export class AdminDashboardComponent implements OnInit {
 
