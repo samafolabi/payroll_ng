@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { app, analytics, onAuth, auth, signIn, signOut, signUp } from '../../firebase';
 import { getDatabase, ref, child, get, set, DataSnapshot } from "firebase/database";
@@ -14,6 +14,21 @@ export class PayrollLoginComponent implements OnInit {
   constructor(private router: Router) { }
 
   db = getDatabase(app);
+
+  @Input()
+  set sign_up(bool: string) {
+    if (bool) {
+      const login_link = (document.getElementById("login-tab-link") as HTMLInputElement);
+      const signup_link = (document.getElementById("signup-tab-link") as HTMLInputElement);
+      const login_tab = (document.getElementById("login-tab") as HTMLInputElement);
+      const signup_tab = (document.getElementById("signup-tab") as HTMLInputElement);
+
+      login_link.classList.remove("active");
+      login_tab.classList.remove("active");   
+      signup_link.classList.add("active");
+      signup_tab.classList.add("active");
+    }
+  }
 
   ngOnInit(): void {
     this.authListener();

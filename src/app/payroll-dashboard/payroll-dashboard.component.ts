@@ -79,7 +79,7 @@ export class PayrollDashboardComponent implements OnInit {
         );
         
       } else {
-        this.router.navigateByUrl('/login');
+        this.router.navigateByUrl('/login?sign_up=true');
       }
     })
   }

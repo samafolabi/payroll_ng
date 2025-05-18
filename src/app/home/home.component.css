@@ -10,8 +10,8 @@
     }
 }
 
-@media (max-width: 575px) {
     .btn {
-        padding: 0.9em 3em!important;
+        padding: 0.9em 2em!important;
+        margin-top: 6px;
+        margin-left: 6px;
     }
-}
