@@ -79,7 +79,7 @@ export class PayrollDashboardComponent implements OnInit {
         );
         
       } else {
-        this.router.navigateByUrl('/login?sign_up=true');
+        this.router.navigateByUrl('/login');
       }
     })
   }
@@ -293,7 +293,6 @@ export class PayrollDashboardComponent implements OnInit {
 
   logout() {
     signOut(auth).then(() => {
-      //
       //this.router.navigateByUrl('/login');
     }).catch((error) => {
       alert("Error");
@@ -305,9 +304,10 @@ export class PayrollDashboardComponent implements OnInit {
   print() {
     let prevYear = this.current_year;
     let print_prep = document.getElementById("print_prep");
-    let print_frame = window.frames[0];
+    
+    let print_window = window.open('', 'PRINT', 'height=650,width=900,top=100,left=150');
 
-    if (print_frame && print_prep) {
+    if (print_window && print_prep) {
       print_prep.innerHTML+='<h1 style="text-decoration: underline">Salary Details</h1><br /><br />';
 
       let salary = this.employee_details.salary;
@@ -321,15 +321,15 @@ export class PayrollDashboardComponent implements OnInit {
                 document.getElementById("pay_table")?.innerHTML
                 .replace("Salary Details", keys[i]);
         print_prep.innerHTML += "<br />";
+
+        print_prep.innerHTML+='<style>table {' +
+          'border: 1px solid black; width:70%;}tr{border:1px solid black;}</style>';
       }
       
-      print_prep.innerHTML+='<style>table {' +
-        'border: 1px solid black; width:70%;}tr{border:1px solid black;}</style>';
+      print_window.document.body.innerHTML = print_prep.innerHTML;
 
-
-      print_frame.document.body.innerHTML = print_prep.innerHTML;
-      print_frame.window.focus();
-      print_frame.window.print();
+      print_window.window.focus();
+      print_window.window.print();
       print_prep.innerHTML = "";
 
       this.current_year = prevYear;
@@ -354,7 +354,7 @@ export class PayrollDashboardComponent implements OnInit {
       }
     }
 
-    console.log(csv);
+    //console.log(csv);
 
     try {
       var fileSaverSupport = !!new Blob;

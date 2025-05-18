@@ -16,17 +16,21 @@ export class PayrollLoginComponent implements OnInit {
   db = getDatabase(app);
 
   @Input()
-  set sign_up(bool: string) {
-    if (bool) {
+  set sign_up(bool: boolean) {
       const login_link = (document.getElementById("login-tab-link") as HTMLInputElement);
       const signup_link = (document.getElementById("signup-tab-link") as HTMLInputElement);
       const login_tab = (document.getElementById("login-tab") as HTMLInputElement);
       const signup_tab = (document.getElementById("signup-tab") as HTMLInputElement);
-
+    if (bool) {
       login_link.classList.remove("active");
       login_tab.classList.remove("active");   
       signup_link.classList.add("active");
       signup_tab.classList.add("active");
+    } else {
+      login_link.classList.add("active");
+      login_tab.classList.add("active");   
+      signup_link.classList.remove("active");
+      signup_tab.classList.remove("active");
     }
   }
 

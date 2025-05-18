@@ -35,13 +35,22 @@
     font-size: 24px;
     width: 25%;
     color: rgb(80, 80, 80);
+    background-color: rgb(255,222,100);
     font-weight: bold;
     border: none;
+}
+
+#personals li, #personals button span {
+    background-color: rgb(255,222,100);
 }
 
 #personals td div {
     font-size: 14px;
     color: white;
+}
+
+tfoot ul {
+    width: max-content;
 }
 
 #pay_table td div:first-child {

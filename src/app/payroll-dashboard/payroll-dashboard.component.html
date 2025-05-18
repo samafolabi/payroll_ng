@@ -64,22 +64,22 @@
 
                     </div>
 
-                    <tfoot id="collapse11" class="collapse">
+                    <tfoot id="collapse11" class="collapse fade">
                       <ul>
-                        <li>Email: <br />{{email}}</li>
+                        <li>Email: {{email}}</li>
 
                         @if (!extras_editing) {
-                        <li>Address: <br />
+                        <li>Address: 
                           <span>{{ employee_details.demographics.extras?.address }}</span>
                         </li>
-                        <li>Phone Number (#): <br />
+                        <li>Phone Number (#): 
                           <span>{{ employee_details.demographics.extras?.phone }}</span>
                         </li>
                         <br />
-                        <li>Emergency Contact: <br />
+                        <li>Emergency Contact: 
                           <span>{{ employee_details.demographics.extras?.emer_contact }}</span>
                         </li>
-                        <li>Emergency Contact Phone #: <br />
+                        <li>Emergency Contact Phone #: 
                           <span>{{ employee_details.demographics.extras?.emer_phone }}</span>
                         </li>
                         } @else {
@@ -132,7 +132,6 @@
 
         <div>
             <div style="float: right;margin-bottom: 1em;">
-              <iframe style="display: none;" id="print_frame"></iframe>
               <div style="display: none;" id="print_prep"></div>
               
               <button style="margin-right: 7px;" (click)="csv()">Export</button>  

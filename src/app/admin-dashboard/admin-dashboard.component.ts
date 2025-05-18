@@ -92,6 +92,12 @@ export class AdminDashboardComponent implements OnInit {
     return i;
   }
 
+  cleanID(det: DETAILS) {
+    let details = deep(det);
+    delete details.ID;
+    return details;
+  }
+
   
 
   
@@ -126,11 +132,11 @@ export class AdminDashboardComponent implements OnInit {
 
       const csv = await this.readFileContent(file);
       if (csv) {
-        console.log(csv);
+        //console.log(csv);
         
         let json = csvToJson(csv)
 
-        console.log(json)
+        //console.log(json)
 
         const keyss = Object.keys(this.employee_details.salary);
         let newYears : string[] = [];
@@ -343,7 +349,8 @@ export class AdminDashboardComponent implements OnInit {
       this.modal?.hide();
       this.employee_details.demographics.job_title = this.changed_title;
       this.employee_details.activated=true;
-      set(ref(this.db, 'employees/'+this.uids[this.current_modal_idx]), this.employee_details).then(() => {
+
+      set(ref(this.db, 'employees/'+this.uids[this.current_modal_idx]), this.cleanID(this.employee_details)).then(() => {
         
         set(ref(this.db, 'sick_days_history/'+this.uids[this.current_modal_idx]), [starter_history_item, starter_history_item_v]);
 
@@ -405,7 +412,6 @@ export class AdminDashboardComponent implements OnInit {
   edit_sick_days(id?: string): void {
     var idx = -1;
     if (id != undefined && id.length > 0) {idx = this.findIDindex(id);} else {return;}
-
     if (!this.sick_days_modal) {
       this.sick_days_modal = new Modal("#sick_days_modal", {
         focus: false
@@ -423,41 +429,45 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   save_edit_sick_days() : void {
-    let old_days = this.vaca_or_sick == 'vacation' ? this.employees[this.current_sick_days_modal_idx].vacation_days : this.employees[this.current_sick_days_modal_idx].sick_days;
+    let idx = this.current_sick_days_modal_idx;
+    let uid = this.uids[idx];
+
+    let old_days = this.vaca_or_sick == 'vacation' ? this.employees[idx].vacation_days : this.employees[idx].sick_days;
     let val = (document.getElementById("sick_days_change") as HTMLInputElement).value;
 
     if (val.length > 0 && !Number.isNaN(this.sick_days_change) && this.sick_days_change >= 0 && this.sick_days_change != old_days && this.days_reason.length > 0) {
-        let link = '/'+this.vaca_or_sick+'_days';
-      
-        set(ref(this.db, 'employees/'+this.uids[this.current_sick_days_modal_idx]+link), this.sick_days_change);
+      let link = '/'+this.vaca_or_sick+'_days';
+    
+      set(ref(this.db, 'employees/'+uid+link), this.sick_days_change);
 
-        //upload reason to history
-        let diff = this.sick_days_change - old_days;
-        let verb = diff > 0 ? "Added " : "Removed ";
-        diff = Math.abs(diff);
-        let updated : HISTORY_ITEM = {
-          date: new Date().toISOString().substring(0,10),
-          event: verb + diff + ' '+this.vaca_or_sick+' day'+(diff==1?'':'s'),
-          num_days: this.sick_days_change,
-          type: this.vaca_or_sick == 'vacation' ? 'info_vacation' : 'info',
-          approved: true,
-          more_info: 'Reason: '+this.days_reason
-        };
+      //upload reason to history
+      let diff = this.sick_days_change - old_days;
+      let verb = diff > 0 ? "Added " : "Removed ";
+      diff = Math.abs(diff);
 
-        get(ref(this.db, 'sick_days_history/'+this.uids[this.current_sick_days_modal_idx])).then((snapshot) => {
-          if (snapshot.exists()) {
-            this.days_history = snapshot.val();
+      let updated : HISTORY_ITEM = {
+        date: new Date().toISOString().substring(0,10),
+        event: verb + diff + ' '+this.vaca_or_sick+' day'+(diff==1?'':'s'),
+        num_days: this.sick_days_change,
+        type: this.vaca_or_sick == 'vacation' ? 'info_vacation' : 'info',
+        approved: true,
+        more_info: 'Reason: '+this.days_reason
+      };
 
-            this.days_history.push(updated);
-            set(ref(this.db, 'sick_days_history/'+this.uids[this.current_sick_days_modal_idx]), this.days_history);
-            
-            this.resetModal(true);
-          }
-        }).catch((error) => {
-          alert("Error, please contact admin");
-          console.log(error.message);
-        });
-        
+
+      get(ref(this.db, 'sick_days_history/'+uid)).then((snapshot) => {
+        if (snapshot.exists()) {
+          this.days_history = snapshot.val();
+
+          this.days_history.push(updated);
+          set(ref(this.db, 'sick_days_history/'+uid), this.days_history);
+          
+          this.resetModal(true);
+        }
+      }).catch((error) => {
+        alert("Error, please contact admin");
+        console.log(error.message);
+      });
     }
   }
 
@@ -672,10 +682,7 @@ export class AdminDashboardComponent implements OnInit {
           this.employee_details.deactivated = true;
           this.modal?.hide();
 
-          let details = deep(this.employee_details);
-          delete details.ID;
-
-          set(ref(this.db, 'employees/'+this.uids[y]), details).then(() => {
+          set(ref(this.db, 'employees/'+this.uids[y]), this.cleanID(this.employee_details)).then(() => {
             this.resetModal();
 
             let updated : HISTORY_ITEM = {
@@ -708,6 +715,80 @@ export class AdminDashboardComponent implements OnInit {
     }
     
     
+  }
+
+  deactivate_pre(id? : string) {
+    if (confirm("Are you sure you want to deactivate this user?")) {
+      var idx = -1;
+      if (id != undefined && id.length > 0) {idx = this.findIDindex(id);} else {return;}
+      this.current_modal_idx = idx;
+      this.employees[idx].deactivated = true;
+
+      set(ref(this.db, 'employees/'+this.uids[idx]), this.cleanID(this.employees[idx])).then(() => {
+            let updated : HISTORY_ITEM = {
+              date: new Date().toISOString().substring(0,10),
+              event: 'Deactivated account',
+              num_days: -1,
+              type: 'info',
+              approved: true,
+              more_info: ''
+            };
+    
+            get(ref(this.db, 'sick_days_history/'+this.uids[idx])).then((snapshot) => {
+              this.days_history = [];
+
+              if (snapshot.exists()) {
+                this.days_history = snapshot.val();
+              }
+    
+              this.days_history.push(updated);
+              set(ref(this.db, 'sick_days_history/'+this.uids[idx]), this.days_history);
+              
+            }).catch((error) => {
+              alert("Error, please contact admin");
+              console.log(error.message);
+            });
+
+          });
+    }
+  }
+
+  reactivate(id? : string) {
+    if (confirm("Are you sure you want to reactivate this user?")) {
+      var idx = -1;
+      if (id != undefined && id.length > 0) {idx = this.findIDindex(id);} else {return;}
+        delete this.employees[idx].deactivated;
+
+          this.modal?.hide();
+
+
+          set(ref(this.db, 'employees/'+this.uids[idx]), this.cleanID(this.employees[idx])).then(() => {
+            this.resetModal();
+
+            let updated : HISTORY_ITEM = {
+              date: new Date().toISOString().substring(0,10),
+              event: 'Reactivated account',
+              num_days: -1,
+              type: 'info',
+              approved: true,
+              more_info: ''
+            };
+    
+            get(ref(this.db, 'sick_days_history/'+this.uids[idx])).then((snapshot) => {
+              if (snapshot.exists()) {
+                this.days_history = snapshot.val();
+    
+                this.days_history.push(updated);
+                set(ref(this.db, 'sick_days_history/'+this.uids[idx]), this.days_history);
+              }
+            }).catch((error) => {
+              alert("Error, please contact admin");
+              console.log(error.message);
+            });
+
+          });
+        
+      }
   }
 
 
@@ -770,7 +851,7 @@ export class AdminDashboardComponent implements OnInit {
           this.sick_days_modal?.hide();
           let y = this.current_sick_days_modal_idx;
 
-          set(ref(this.db, 'employees/'+this.uids[y]), this.employees[this.current_sick_days_modal_idx]).then(() => {
+          set(ref(this.db, 'employees/'+this.uids[y]), this.cleanID(this.employees[this.current_sick_days_modal_idx])).then(() => {
             this.current_sick_days_modal_idx = -1;
 
             let updated1 : HISTORY_ITEM = {
@@ -910,8 +991,8 @@ organize () {
     }
   }
 
-  console.log(emps);
-  console.log(this.uids);
+  //console.log(emps);
+  //console.log(this.uids);
   
   return emps;
 

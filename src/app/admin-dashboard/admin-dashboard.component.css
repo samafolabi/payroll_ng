@@ -79,3 +79,15 @@ label.btn {
     text-align: center;
 }
 
+#filter_tags div {
+    display: inline-block;
+}
+
+#filter_tags div {
+    margin-right: 10px;
+}
+
+#filter_tags label {
+    margin-left: 3px;
+    margin-bottom: 1px;
+}

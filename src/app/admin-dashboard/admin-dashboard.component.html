@@ -11,12 +11,12 @@
 
     <div class="table-responsive" style="clear: both;">
       
-      <form>
-        <h3>Filter:</h3>
+      <form id="filter_tags">
+        <h4>Filter:</h4>
         @for (label of labels; track $index; let i = $index) {
           <div>
             <input (change)="filter()" checked type="checkbox" class="labels" id="{{label}}" name="{{label}}" value="{{i}}">
-            <label for="{{label}}">{{label == '' ? 'Untagged' : label}}</label><br>
+            <label for="{{label}}">{{label == '' ? 'Untagged' : label}}</label>
           </div>
         }
 
@@ -42,7 +42,14 @@
                 @if (employee.deactivated != true) {
                   <tr>
                     @if (!employee.activated) {    
-                      <th><button class="btn btn-primary small" (click)="activate(employee.ID)">Activate</button></th>
+                      <th>
+                        <div class="btn-group" role="group">
+                          <button class="btn btn-primary small" style="padding: 8px!important;width: initial;border-right: 2px solid white;" (click)="deactivate_pre(employee.ID)">
+                            <i class="bi bi-x" style="margin: 0;"></i>
+                          </button>
+                        <button class="btn btn-primary small" (click)="activate(employee.ID)">Activate</button>
+                        </div>
+                      </th>
                     } @else {
                       <th><button class="btn btn-primary small" (click)="open(employee.ID)">Open</button></th>
                     }
@@ -90,7 +97,9 @@
 
                         <td>
                           <select [(ngModel)]="employee.demographics.label" (change)="label_update($event, employee.ID)">
-                            <option *ngFor="let label of labels; let j = index" value="{{j}}">{{label}}</option>
+                            @for (label of labels; track $index; let j = $index) {
+                              <option value="{{j}}">{{label}}</option>
+                            }
                           </select>
                         </td>
                   </tr>
@@ -145,7 +154,7 @@
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" style="color: black;">Edit Employee</h5>
+              <h5 class="modal-title" style="color: black;">{{ employee_details.demographics.first_name + ' ' + employee_details.demographics.last_name }}</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -200,7 +209,9 @@
                               <tr>
                                 <td>
                                   <select style="padding-top: 6px;padding-bottom: 6px;" placeholder="Month" id="{{'months_'+year.key}}">
-                                    <option *ngFor="let item of current_modal_months[year.key].months; let j = index" value="{{item}}">{{item}}</option>
+                                    @for (item of current_modal_months[year.key].months; track $index; let j = $index) {
+                                      <option value="{{item}}">{{item}}</option>
+                                    }  
                                   </select>
                                 </td>
                                 <td colspan="6"></td>
@@ -243,8 +254,12 @@
                 </div>
               }
 
-              @if (employee_details.deactivated != true) {
-                <button class="btn btn-primary small" (click)="deactivate()">Deactivate</button>
+              @if (employee_details.activated) {
+                @if (employee_details.deactivated == true) {
+                  <button class="btn btn-primary small" style="width: 120px;" (click)="reactivate(employee_details.ID)">Reactivate</button>
+                } @else {
+                  <button class="btn btn-primary small" style="width: 120px;" (click)="deactivate()">Deactivate</button>
+                }
               }
             </div>
 
