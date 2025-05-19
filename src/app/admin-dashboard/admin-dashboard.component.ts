@@ -907,7 +907,12 @@ export class AdminDashboardComponent implements OnInit {
       //console.log(i)
       i = i < 0 ? 0 : i;
       //console.log(i)
+
+      let old = this.employees[idx].demographics.label;
       this.employees[idx].demographics.label = i;
+
+      (event.target as HTMLSelectElement).value = ''+old;
+
       set(ref(this.db, 'employees/'+this.uids[idx]+'/demographics/label'), i);
     }
 

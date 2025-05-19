@@ -96,9 +96,9 @@
                         </td>
 
                         <td>
-                          <select [(ngModel)]="employee.demographics.label" (change)="label_update($event, employee.ID)">
+                          <select class="selectt" (change)="label_update($event, employee.ID)">
                             @for (label of labels; track $index; let j = $index) {
-                              <option value="{{j}}">{{label}}</option>
+                              <option [selected]="employee.demographics.label == j ? 'selected' : null" value="{{j}}">{{label}}</option>
                             }
                           </select>
                         </td>
