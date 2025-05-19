@@ -108,4 +108,24 @@ export interface PENDING_DAY {[index: string] : {
   name: string;
   type: string;
 }}
-  
+
+export interface EMAIL_ITEM {
+  sick_days : number,
+  vacation_days : number,
+  first_name: string,
+  last_name: string,
+  date : string,
+  type : string,
+  more_info : string,
+  text? : string
+}
+
+export const starter_email_item : EMAIL_ITEM = {
+  sick_days : 0,
+  vacation_days : 0,
+  first_name: 'No',
+  last_name: 'Name',
+  date : new Date(0).toISOString().substring(0,10),
+  type : 'Error',
+  more_info : 'There was an error with emailing request details'
+}

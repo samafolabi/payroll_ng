@@ -3,10 +3,11 @@ import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { onAuth, auth, app, signOut } from '../../firebase';
 import { getDatabase, ref, set, onValue, child, push, update, DataSnapshot, get, remove } from "firebase/database";
-import { DETAILS, sample_details, HISTORY_ITEM, PENDING_DAY } from "../../payroll_details";
+import { DETAILS, sample_details, HISTORY_ITEM, PENDING_DAY, EMAIL_ITEM, starter_email_item } from "../../payroll_details";
 import { Modal } from 'bootstrap';
 import { FormsModule } from '@angular/forms'
 import { MonthPipe } from '../month.pipe';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-payroll-dashboard',
@@ -33,7 +34,8 @@ export class PayrollDashboardComponent implements OnInit {
   uid : string = "";
   email : string = "";
 
-  constructor(private router: Router, @Inject(ChangeDetectorRef) private changeDetection: ChangeDetectorRef) { }
+  constructor(private router: Router, @Inject(ChangeDetectorRef) private changeDetection: ChangeDetectorRef,
+              private http: HttpClient) { }
 
   days_history_modal: Modal | null = null;
   days_history: HISTORY_ITEM[] = [];
@@ -45,6 +47,10 @@ export class PayrollDashboardComponent implements OnInit {
   pending_days_modal: Modal | null = null;
   pending_days: PENDING_DAY = {};
   pending_days_ids: string[] = [];
+
+  email_path: string = 
+                // "http://localhost:8000";
+                "https://mail-code.theimperialmedia.com:8000";
 
   ngOnInit(): void {
     this.authListener();
@@ -162,6 +168,17 @@ export class PayrollDashboardComponent implements OnInit {
           type: day_type
         };
 
+        let emailData : EMAIL_ITEM = {
+          date: sel_date,
+          sick_days: this.employee_details.sick_days,
+          vacation_days: this.employee_details.vacation_days,
+          first_name: this.employee_details.demographics.first_name,
+          last_name: this.employee_details.demographics.last_name,
+          type: day_type,
+          more_info: this.days_reason
+        }
+        emailData.type = emailData.type.charAt(0).toUpperCase() + emailData.type.slice(1);
+
         const newPostKey = push(child(ref(this.db), 'pending_days')).key;
 
         if(newPostKey) {
@@ -181,6 +198,16 @@ export class PayrollDashboardComponent implements OnInit {
             }
             arr.push(newPostKey);
             set(ref(this.db, 'employees/'+this.uid+'/pending_days'), arr);
+
+            
+            this.http.post<EMAIL_ITEM>(this.email_path+'/mail/test', emailData).subscribe(res => {
+              console.log(res);
+              if (res['text'] && res['text'] != 'true') {
+                alert("There was an error sending an email. Please directly contact your manager/admin")
+              }
+            })
+
+
           }).catch((error) => {
             alert("Error, please contact admin");
             console.log(error.message);
