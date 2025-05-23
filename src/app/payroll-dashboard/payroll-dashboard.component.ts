@@ -50,7 +50,7 @@ export class PayrollDashboardComponent implements OnInit {
 
   email_path: string = 
                 // "http://localhost:8000";
-                "https://mail-code.theimperialmedia.com:8000";
+                "https://mail-code.theimperialmedia.com";
 
   ngOnInit(): void {
     this.authListener();
